@@ -51,19 +51,19 @@ def load(retail_df):
     :param retail_df: dataframe to save to db
     :return: None
     """
-    (retail_df
-     .write
-     .format('parquet')
-     .mode('overwrite')
-     .partitionBy('country')
-     .bucketBy(3, 'product_color')
-     .saveAsTable('retailPartitionsParquet'))
+    # (retail_df
+    #  .write
+    #  .format('parquet')
+    #  .mode('overwrite')
+    #  .partitionBy('country')
+    #  .bucketBy(3, 'product_color')
+    #  .saveAsTable('retailPartitionsParquet'))
 
     (retail_df
-         .write
-         .format('json')
-         .mode('overwrite')
-         .partitionBy('country')
-         .bucketBy(3, 'product_color')
-         .saveAsTable('retailPartitionsJson'))
+        .repartition(2)
+        .write
+        .format('json')
+        .mode('overwrite')
+        .partitionBy('country')
+        .save('output-data/warehouse/countryAggJson'))
 

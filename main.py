@@ -1,4 +1,4 @@
-from jobs import data_preprocess
+from jobs import data_preprocess, filter_dimentions
 from dependencies.spark import spark_session
 from os import path
 
@@ -34,3 +34,15 @@ if __name__ == '__main__':
 
     data_preprocess.load(preprocessed_retail)
     logger.info('JOB1: load complete')
+
+    # filter attribute columns job begins
+    logger.info('JOB 2: preprocessing initial input data started')
+
+    retail_df = filter_dimentions.extract(spark_session)  # extract data from retail data source
+    logger.info('JOB 2: extract complete')
+
+    preprocessed_retail = filter_dimentions.transform(retail_df)
+    logger.info('JOB 2: transformation complete')
+
+    filter_dimentions.load(preprocessed_retail)
+    logger.info('JOB2: load complete')
