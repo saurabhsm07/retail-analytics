@@ -1,4 +1,4 @@
-from jobs import data_preprocess, filter_dimentions
+from jobs import data_preprocess, filter_dimentions, country_color_agg, max_quantity_bought
 from dependencies.spark import spark_session
 from os import path
 
@@ -26,13 +26,13 @@ if __name__ == '__main__':
     # preprocess Job begins
     logger.info('JOB 1: preprocessing initial input data started')
 
-    retail_df = data_preprocess.extract(spark_session)  # extract data from retail data source
+    retail_df = country_color_agg.extract(spark_session)  # extract data from retail data source
     logger.info('JOB 1: extract complete')
 
-    preprocessed_retail = data_preprocess.transform(retail_df)
+    preprocessed_retail = country_color_agg.transform(retail_df)
     logger.info('JOB 1: transformation complete')
 
-    data_preprocess.load(preprocessed_retail)
+    country_color_agg.load(preprocessed_retail)
     logger.info('JOB1: load complete')
 
     # filter attribute columns job begins
@@ -46,3 +46,16 @@ if __name__ == '__main__':
 
     filter_dimentions.load(preprocessed_retail)
     logger.info('JOB2: load complete')
+
+    # filter attribute columns job begins
+    logger.info('JOB 3 preprocessing initial input data started')
+
+    retail_df = max_quantity_bought.extract(spark_session)  # extract data from retail data source
+    logger.info('JOB 3: extract complete')
+
+    preprocessed_retail = max_quantity_bought.transform(retail_df)
+    logger.info('JOB 3: transformation complete')
+
+    max_quantity_bought.load(preprocessed_retail)
+    logger.info('JOB 3: load complete')
+

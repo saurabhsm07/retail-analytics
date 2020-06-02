@@ -5,7 +5,7 @@ data_preprocess.py
 
 ETL job to:
 EXTRACT initial retail data provided by client from specified location,
-TRANSFORM in preprocessing stage to identify and remove errors,
+TRANSFORM analyse products bought of specific color
 LOAD (Save) data to specified location for future Jobs
 
 """
@@ -16,8 +16,8 @@ def extract(spark):
 
         :param spark: Spark session object.
         :return: retail park DataFrame.
-        """
-    print(spark)
+    """
+
     retail_df = (spark.read.csv('./input-data/retail/*.csv',
                                 schema=None,
                                 sep=",",
@@ -29,18 +29,27 @@ def extract(spark):
 
 def transform(retail_df):
     """
-
+    transformations:
+        extract color name from description attribute
+        select 'Country', 'Quantity', 'UnitPrice' and update product_color by replacing empty value with 'nocolor
+        groupBy country and product color
+        sum Quantity, UnitePrice as total_price and total_quantity respectively
+        Add column avg_spent = total_price/ total_quantity
     :param retail_df:
     :return:
     """
-    from pyspark.sql.functions import regexp_extract, col, count, sum
+    from pyspark.sql.functions import regexp_extract, col, count, sum, expr, regexp_replace
 
     extract_str = "(BLACK|WHITE|RED|GREEN|BLUE)"
 
     transformed_retail = (retail_df.withColumn('product_color', regexp_extract(col("Description"), extract_str, 1))
-                                   .groupBy('country', 'product_color')
-                                   .agg(count('CustomerID').alias('customer_counts'),
-                                        sum('UnitPrice').alias('total_spent')))
+                          .select('Country', 'Quantity', 'UnitPrice',
+                                  regexp_replace(col("product_color"), '^$', "NOCOLOR").alias('product_color'))
+                          .groupBy('Country', 'product_color')
+                          .agg(sum('Quantity').alias('total_quantity'),
+                               sum('UnitPrice').alias('total_price'))
+                          .withColumn('avg_spent (dollars)', expr('total_price/total_quantity'))
+                          )
 
     return transformed_retail
 
@@ -51,19 +60,11 @@ def load(retail_df):
     :param retail_df: dataframe to save to db
     :return: None
     """
-    # (retail_df
-    #  .write
-    #  .format('parquet')
-    #  .mode('overwrite')
-    #  .partitionBy('country')
-    #  .bucketBy(3, 'product_color')
-    #  .saveAsTable('retailPartitionsParquet'))
-
     (retail_df
-        .repartition(2)
+        .coalesce(2)
         .write
         .format('json')
         .mode('overwrite')
-        .partitionBy('country')
+        .partitionBy('product_color')
         .save('output-data/warehouse/countryAggJson'))
 
