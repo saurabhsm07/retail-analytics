@@ -15,8 +15,8 @@ from pyspark.sql import SparkSession
 from dependencies import logging
 
 
-def spark_session(app_name='spark-application', master='local[*]',
-                  files=[], spark_config={}, jar_packages=[]):
+def create_spark_session(app_name='spark-application', master='local[*]',
+                         files=[], spark_config={}, jar_packages=[]):
     """
     method creates a spark session object
     :param jar_packages:
@@ -24,12 +24,13 @@ def spark_session(app_name='spark-application', master='local[*]',
     :param master: master nodes connection details
     :param files: path to files to be placed on each executor
     :param spark_config: dictionary of key-value pair config variables for spark session
-    :return: tuple of (spark_session,
+    :return: tuple of (create_spark_session,
     """
 
     spark_builder = (SparkSession
                      .builder
                      .master(master)
+                     .enableHiveSupport()
                      .appName(app_name))
 
     spark_jars_packages = ','.join(list(jar_packages))
@@ -39,7 +40,11 @@ def spark_session(app_name='spark-application', master='local[*]',
     spark_builder.config('spark.files', spark_files)
 
     # add other config params
+    print("near keyss")
+    print(spark_config)
     for key, val in spark_config.items():
+        print("keysss")
+        print(key)
         spark_builder.config(key, val)
 
     # create session and retrieve Spark logger object
@@ -49,8 +54,7 @@ def spark_session(app_name='spark-application', master='local[*]',
     # get config file if sent to cluster with --files
 
     spark_files_dir = SparkFiles.getRootDirectory()
-    print('hi')
-    print(spark_files_dir)
+
     config_files = [filename
                     for filename in listdir(spark_files_dir)
                     if filename.endswith('config.json')]

@@ -1,16 +1,16 @@
 """
-Script contains utility functions that are required accross multiple jobs
+Script contains utility functions that are required across multiple jobs
 """
 
 
-def createRetailSchema():
+def create_retail_schema():
     """
     method creates and returns a fixed schema for retail dataset
     :return: schema object for retail dataset
     """
     from pyspark.sql.types import StructField, StructType, StringType, LongType, IntegerType, DoubleType, TimestampType
 
-    retailSchema = StructType([
+    retail_schema = StructType([
         StructField("InvoiceNo", LongType(), True),
         StructField("StockCode", StringType(), True),
         StructField("Description", StringType(), True),
@@ -21,4 +21,4 @@ def createRetailSchema():
         StructField("Country", StringType(), True)
     ])
 
-    return retailSchema
+    return retail_schema
