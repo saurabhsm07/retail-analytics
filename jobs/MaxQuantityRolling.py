@@ -1,6 +1,6 @@
 """
 
-data_preprocess.py
+DataPreprocess.py
 --------------------
 
 ETL job to:
@@ -76,6 +76,6 @@ def load(retail_df):
         .write
         .format('json')
         .mode('overwrite')
-        .partitionBy('InvoiceDate')
+        .partitionBy('Quantity')
         .save('output-data/warehouse/maxBoughtJson'))
 
