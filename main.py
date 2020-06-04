@@ -68,11 +68,11 @@ if __name__ == '__main__':
 
     logger.warn('spark session created');
 
-    # execute_job0(spark_session)
+    execute_job0(spark_session)
 
-    # executeJob1(spark_session)
-    #
-    # executeJob2(spark_session)
+    executeJob1(spark_session)
+
+    executeJob2(spark_session)
 
     executeJob3(spark_session)
 

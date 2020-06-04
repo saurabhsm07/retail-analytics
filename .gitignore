@@ -1,2 +1,4 @@
 **/input-data/retail
 **/warehouse
+./metastore_db/
+metastore_db/

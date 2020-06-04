@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Wed Jun 03 18:53:48 IST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0172-7a5a-25bb-000008f78070 
-on database directory /home/maverick/workspace/personal-workspace/spark-workspace/retail-analytics/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@504243dc 
+Wed Jun 03 21:03:18 IST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0172-7ad0-b682-000007c8fd00 
+on database directory /home/maverick/workspace/personal-workspace/spark-workspace/retail-analytics/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@6b34e613 
 Loaded from file:/home/maverick/program-files/spark/spark-2.4.4-bin-hadoop2.7/jars/derby-10.12.1.1.jar
 java.vendor=Private Build
 java.runtime.version=1.8.0_252-8u252-b09-1~19.10-b09

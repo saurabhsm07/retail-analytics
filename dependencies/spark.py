@@ -40,11 +40,7 @@ def create_spark_session(app_name='spark-application', master='local[*]',
     spark_builder.config('spark.files', spark_files)
 
     # add other config params
-    print("near keyss")
-    print(spark_config)
     for key, val in spark_config.items():
-        print("keysss")
-        print(key)
         spark_builder.config(key, val)
 
     # create session and retrieve Spark logger object

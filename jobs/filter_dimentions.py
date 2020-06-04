@@ -49,6 +49,6 @@ def load(retail_df):
      .format('json')
      .mode('overwrite')
      .partitionBy('country')
-     .save('retail_extracted_features'))
+     .save('./warehouse/retail_extracted_features'))
 
 
