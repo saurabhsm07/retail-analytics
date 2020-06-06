@@ -12,7 +12,7 @@ def get_spark_session():
                                        "spark.local.dir": absolute_path + '/retail-analytics/warehouse',
                                        'spark.executor.instances': '3',
                                        'spark.executor.memory': '3g',
-                                       'spark.cores.max': '3'})
+                                       'spark.executor.cores': '1'})
 
 
 def end_spark_session(spark_session):
