@@ -62,7 +62,7 @@ def load(retail_df):
      .format('parquet')
      .mode('overwrite')
      .partitionBy('invoiceYear', 'invoiceMonth', 'invoiceDay')
-     .bucketBy(5, 'Country')
-     .saveAsTable('retail_cleaned'))
+     # .bucketBy(5, 'Country')
+     .save('wasbs:///warehouse/retail_cleaned'))
 
 

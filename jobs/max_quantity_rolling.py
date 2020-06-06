@@ -73,5 +73,5 @@ def load(retail_df):
      .write
      .format('json')
      .mode('overwrite')
-     .bucketBy(2, 'Quantity')
-     .saveAsTable('maximum_rolling_customer'))
+     # .bucketBy(2, 'Quantity')
+     .save('wasbs:///warehouse/maximum_rolling_customer'))
