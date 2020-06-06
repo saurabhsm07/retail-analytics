@@ -10,9 +10,9 @@ def get_spark_session():
                          files=['config/preprocess_config.json'],
                          spark_config={'spark.sql.warehouse.dir': './warehouse',
                                        "spark.local.dir":  './warehouse',
-                                       # 'spark.executor.instances': 2,
-                                       # 'spark.executor.memory': '1g',
-                                       # 'spark.executor.cores': 2
+                                       'spark.executor.instances': 2,
+                                       'spark.executor.memory': '1g',
+                                       'spark.executor.cores': 2
                                        })
 
 
