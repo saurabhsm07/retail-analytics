@@ -18,7 +18,7 @@ def extract(spark):
         :return: retail park DataFrame.
     """
 
-    retail_df = (spark.read.parquet('file:///warehouse/retail_cleaned'))
+    retail_df = (spark.read.parquet('wasbs:///warehouse/retail_cleaned'))
 
 
     return retail_df
@@ -63,5 +63,5 @@ def load(retail_df):
         .format('json')
         .mode('overwrite')
         .partitionBy('product_color')
-        .save('file:///warehouse/country_color_expanses'))
+        .save('wasbs:///warehouse/country_color_expanses'))
 

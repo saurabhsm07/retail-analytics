@@ -23,7 +23,7 @@ def extract(spark):
         """
     retail_df = (spark.read
                  .schema(utility.create_retail_schema())
-                 .csv('file:///input-data/*.csv',
+                 .csv('wasbs:///input-data/*.csv',
                       schema=None,
                       sep=",",
                       header=True,
