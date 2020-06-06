@@ -4,7 +4,7 @@ spark-submit --master local[1] --py-files packages.zip --files config/preprocess
 
 **RUN below command to submit the HD insight:**
 
-spark-submit --master yarn --deploy-mode client --py-files packages.zip  --files config/preprocess_config.json main.py
+spark-submit --master yarn --deploy-mode cluster --py-files packages.zip  --files config/preprocess_config.json main.py
 
 
 ex:
