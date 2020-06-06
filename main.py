@@ -11,7 +11,7 @@ def get_spark_session():
                          spark_config={'spark.sql.warehouse.dir': absolute_path + 'retail-analytics/warehouse',
                                        "spark.local.dir": absolute_path + '/retail-analytics/warehouse',
                                        'spark.executor.instances': '2',
-                                       'spark.executor.memory': '2g',
+                                       'spark.executor.memory': '1g',
                                        'spark.executor.cores': '2'})
 
 
