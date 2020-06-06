@@ -8,8 +8,8 @@ def get_spark_session():
 
     return spark.create_spark_session(app_name='my_etl_job',
                          files=['config/preprocess_config.json'],
-                         spark_config={'spark.sql.warehouse.dir': 'warehouse',
-                                       "spark.local.dir":  'warehouse',
+                         spark_config={'spark.sql.warehouse.dir': 'file:///warehouse',
+                                       "spark.local.dir":  'file:///warehouse',
                                        'spark.executor.instances': 2,
                                        'spark.executor.memory': '1g',
                                        'spark.executor.cores': 2

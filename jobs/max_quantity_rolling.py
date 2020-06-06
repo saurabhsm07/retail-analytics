@@ -18,7 +18,7 @@ def extract(spark):
         :return: retail park DataFrame.
     """
 
-    retail_df = (spark.read.parquet('warehouse/retail_cleaned'))
+    retail_df = (spark.read.parquet('file:///warehouse/retail_cleaned'))
 
 
     return retail_df
