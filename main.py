@@ -4,7 +4,7 @@ import os
 
 
 def get_spark_session():
-    absolute_path = '/home/maverick/workspace/personal-workspace/spark-workspace/'
+    absolute_path = 'wasbs://retail-cluster-2020-06-06t04-18-37-166z@retailclusterhdistorage.blob.core.windows.net/'
 
     return spark.create_spark_session(app_name='my_etl_job',
                          files=['config/preprocess_config.json'],

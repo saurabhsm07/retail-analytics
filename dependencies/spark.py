@@ -15,7 +15,7 @@ from pyspark.sql import SparkSession
 from dependencies import logging
 
 
-def create_spark_session(app_name='spark-application', master='local[*]',
+def create_spark_session(app_name='spark-application', master='',
                          files=[], spark_config={}, jar_packages=[]):
     """
     method creates a spark session object
