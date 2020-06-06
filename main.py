@@ -10,8 +10,9 @@ def get_spark_session():
                          files=['config/preprocess_config.json'],
                          spark_config={'spark.sql.warehouse.dir': absolute_path + 'retail-analytics/warehouse',
                                        "spark.local.dir": absolute_path + '/retail-analytics/warehouse',
-                                       'spark.executor.memory': '1g',
-                                       'spark.cores.max': '2'})
+                                       'spark.executor.instances': '3',
+                                       'spark.executor.memory': '3g',
+                                       'spark.cores.max': '3'})
 
 
 def end_spark_session(spark_session):
