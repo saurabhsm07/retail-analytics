@@ -8,11 +8,12 @@ def get_spark_session():
 
     return spark.create_spark_session(app_name='my_etl_job',
                          files=['config/preprocess_config.json'],
-                         spark_config={'spark.sql.warehouse.dir': absolute_path + 'retail-analytics/warehouse',
-                                       "spark.local.dir": absolute_path + '/retail-analytics/warehouse',
-                                       'spark.executor.instances': 2,
-                                       'spark.executor.memory': '1g',
-                                       'spark.executor.cores': 2})
+                         spark_config={'spark.sql.warehouse.dir': './warehouse',
+                                       "spark.local.dir":  './warehouse',
+                                       # 'spark.executor.instances': 2,
+                                       # 'spark.executor.memory': '1g',
+                                       # 'spark.executor.cores': 2
+                                       })
 
 
 def end_spark_session(spark_session):
