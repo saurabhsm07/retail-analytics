@@ -1,4 +1,4 @@
-from jobs import data_preprocess, filter_dimentions, country_color_aggregations, max_quantity_rolling
+from jobs import data_preprocess, filter_dimentions, country_color_aggregations, max_quantity_rolling, daily_sale
 from dependencies import spark
 import os
 
@@ -61,6 +61,16 @@ def executeJob3(spark_session):
     max_quantity_rolling.load(preprocessed_retail)
     logger.info('JOB 3: load complete')
 
+def executeJob4(spark_session):
+    # filter attribute columns job begins
+    logger.info('JOB 4 preprocessing initial input data started')
+    retail_df = daily_sale.extract(spark_session)  # extract data from retail data source
+    logger.info('JOB 4: extract complete')
+    preprocessed_retail = daily_sale.transform(retail_df)
+    logger.info('JOB 4: transformation complete')
+    daily_sale.load(preprocessed_retail)
+    logger.info('JOB 4: load complete')
+
 
 # entry point for PySpark ETL application
 if __name__ == '__main__':
@@ -76,5 +86,8 @@ if __name__ == '__main__':
 
     executeJob3(spark_session)
 
+    executeJob4(spark_session)
+
     end_spark_session(spark_session)
     logger.info("successfully completed spark job")
+0
