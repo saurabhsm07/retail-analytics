@@ -52,7 +52,7 @@ def transform(retail_df):
 
 
 def load(retail_df):
-    """Collect data locally and write to CSV.
+    """Collect data locally and write to sparkFixCSV.
 
     :param retail_df: dataframe to save to db
     :return: None
