@@ -15,15 +15,16 @@ LOAD (Save) data to specified location for net set of jobs
 from dependencies import utility
 
 
-def extract(spark):
+def extract(spark, file_path = './input-data/retail/*.csv'):
     """Load data csv dataset files.
 
+        :param file_path: path to the directory/ files for the extract stage
         :param spark: Spark session object.
         :return: retail park DataFrame.
         """
     retail_df = (spark.read
                  .schema(utility.create_retail_schema())
-                 .csv('./input-data/retail/*.csv',
+                 .csv(file_path,
                       schema=None,
                       sep=",",
                       header=True,
