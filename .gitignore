@@ -6,3 +6,4 @@ metastore_db/
 **/local/
 *.zip
 **/.idea/
+*.log
