@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from jobs import data_preprocess
+from src.jobs import data_preprocess
 from dependencies import spark
 
 
