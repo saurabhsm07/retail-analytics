@@ -38,16 +38,16 @@ df.write.partitionBy('category', 'section').mode("overwrite").parquet(output_pat
 # MY CHANGES
 
 spark.createDataFrame([], schema).writeTo(
-    "data_catalog.piidata_catalog.old_user").partitionedBy("category","section").createOrReplace()
+    "data_catalog.test_db.user").partitionedBy("category","section").createOrReplace()
 
-spark.sql(f"ALTER TABLE data_catalog.public.old_user "
+spark.sql(f"ALTER TABLE data_catalog.test_db.user "
           f"SET TBLPROPERTIES ('write.metadata.path' = '{metadata_path}')")
-spark.sql(f"ALTER TABLE data_catalog.public.old_user "
+spark.sql(f"ALTER TABLE data_catalog.test_db.user "
           f"SET TBLPROPERTIES ('write.data.path' = '{output_path}')")
 # #
 #
-add_files_script = ("CALL data_catalog.system.add_files(table => 'data_catalog.public.old_user', "
+add_files_script = ("CALL data_catalog.system.add_files(table => 'data_catalog.test_db.user', "
                     f"source_table => '`parquet`.`{output_path}`')")
 
 spark.sql(add_files_script)
-print(spark.sql('SHOW TBLPROPERTIES data_catalog.public.old_user_data').show())
+print(spark.sql('SHOW TBLPROPERTIES data_catalog.test_db.user').show())
