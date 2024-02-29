@@ -1,4 +1,4 @@
-from jobs import data_preprocess, filter_dimentions, country_color_aggregations, max_quantity_rolling, daily_sale
+from src.jobs import filter_dimentions, daily_sale, country_color_aggregations, max_quantity_rolling, data_preprocess
 from dependencies import spark
 import os
 
