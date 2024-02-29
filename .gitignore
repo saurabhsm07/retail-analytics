@@ -5,3 +5,4 @@ metastore_db/
 **/__pycache__/
 **/local/
 *.zip
+**/.idea/

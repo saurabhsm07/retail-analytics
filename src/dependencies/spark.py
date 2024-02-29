@@ -12,7 +12,7 @@ import json
 from pyspark import SparkFiles
 from pyspark.sql import SparkSession
 
-from dependencies import logging
+from src.dependencies import logging
 
 
 def create_spark_session(app_name='spark-application', master='local[*]',

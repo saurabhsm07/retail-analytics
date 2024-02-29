@@ -12,7 +12,7 @@ TRANSFORM remove/ replace nulls,
 
 LOAD (Save) data to specified location for net set of jobs
 """
-from dependencies import utility
+from src.dependencies import utility
 
 
 def extract(spark, file_path = './input-data/retail/*.csv'):

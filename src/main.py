@@ -7,8 +7,8 @@ def get_spark_session():
     absolute_path = '/home/maverick/workspace/personal-workspace/spark-workspace/'
 
     return spark.create_spark_session(app_name='my_etl_job',
-                         files=['config/preprocess_config.json'],
-                         spark_config={'spark.sql.warehouse.dir': absolute_path + 'retail-analytics/warehouse',
+                                      files=['config/preprocess_config.json'],
+                                      spark_config={'spark.sql.warehouse.dir': absolute_path + 'retail-analytics/warehouse',
                                        "spark.local.dir": absolute_path + '/retail-analytics/warehouse',
                                        'spark.executor.memory': '1g',
                                        'spark.cores.max': '2'})
