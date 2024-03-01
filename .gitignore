@@ -1,4 +1,10 @@
 **/input-data/retail
-**/warehouse
+**/warehouse/
 ./metastore_db/
 metastore_db/
+**/__pycache__/
+**/local/
+*.zip
+**/.idea/
+*.log
+**/volume/
