@@ -26,11 +26,11 @@ N/A
 - Only submit jobs without any dependencies.
 - Support for additional JARs, python packages not implemented.
 - Only modules present in `src/etl/` package are runnable at this point. Other modules are not migrated. 
-- Legacy project migration in progress. Some components will fail. For not this is just a simple cluster setup with postgres and S3 support.
+- Legacy project migration in progress. Some components will fail. For now this is just a simple cluster setup with postgres and S3 support.
 
 ### UPDATES:
 
-N/A
+See `task_list.md` for more details.
 
 ### Workarounds:
 
