@@ -12,7 +12,7 @@
 
 - Run command `docker-compose up --build -d` or any of its variant approaches to build and start the spark cluster and other services.
 
-- utilize make file commands for examples
+- utilize `MakeFile` commands for examples.
 
 ### Running Test Suite:  
 N/A
