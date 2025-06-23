@@ -1,7 +1,7 @@
 import pytest
 
-from src.jobs import country_color_aggregations
-from src.dependencies import spark
+from jobs import country_color_aggregations
+from dependencies import spark
 
 
 @pytest.fixture(scope="module")

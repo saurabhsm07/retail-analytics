@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from src.jobs import data_preprocess
-from src.dependencies import spark
+from jobs import data_preprocess
+from dependencies import spark
 
 
 @pytest.fixture(scope="module")

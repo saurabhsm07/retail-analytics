@@ -12,6 +12,11 @@ up: ## Start all containers
 down: ## Stop all containers
 	docker compose down
 
+.PHONY: start-client-session
+start-client-session: ## Start Spark client session
+	@echo "Starting Spark client session..."
+	docker exec -it spark-client /bin/bash
+
 .PHONY: spark-submit-master-example
 spark-submit-master-example: ## Submit example script to Spark master
 	@echo "Submitting example script to Spark master..."

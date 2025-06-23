@@ -87,7 +87,7 @@ services:
       dockerfile: Dockerfile.spark-client
     container_name: spark-client
     volumes:
-      - ./src:/app
+      - .:/app
     command: ["sleep", "infinity"]
     depends_on:
       spark-worker-1:
