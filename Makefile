@@ -4,6 +4,12 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "%-30s %s\n", $$1, $$2}'
 
+
+.PHONY: build
+build: ## Build Docker images
+	docker compose build
+
+	
 .PHONY: up
 up: ## Start all containers
 	docker compose up -d
@@ -16,6 +22,11 @@ down: ## Stop all containers
 start-client-session: ## Start Spark client session
 	@echo "Starting Spark client session..."
 	docker exec -it spark-client /bin/bash
+
+.PHONY: start-master-session
+start-master-session: ## Start Spark master session
+	@echo "Starting Spark master session..."
+	docker exec -it spark-master /bin/bash
 
 .PHONY: spark-submit-master-example
 spark-submit-master-example: ## Submit example script to Spark master

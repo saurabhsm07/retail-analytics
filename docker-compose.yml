@@ -47,13 +47,12 @@ services:
       - "7077:7077"
       - "4040:4040"
     volumes:
-      - "./src/:/opt/spark/work-dir"
+      - "./:/opt/spark/work-dir:rw"
       - "${HOME}/.aws/:/opt/spark/.aws:ro"
       - "./volume/tmp/:/tmp/"
       - "./volume/h-s/:/tmp/hadoop-spark/"
       - "./volume/h-s-a/:/tmp/hadoop-spark/s3a"
       - "./config/spark/:/opt/spark/conf/"
-      - "./local/jars/:/opt/spark/ivy/"
     depends_on:
       localstack:
         condition: service_started
@@ -88,6 +87,9 @@ services:
     container_name: spark-client
     volumes:
       - .:/app
+      - ./local/jars/:/opt/spark/jars/
+    environment:
+      - CLASSPATH=/opt/spark/jars/*
     command: ["sleep", "infinity"]
     depends_on:
       spark-worker-1:

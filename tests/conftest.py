@@ -36,7 +36,8 @@ def generate_test_pii_data_to_s3_parquet(bucket_name, object_key,
                                          aws_access_key_id='test', 
                                          aws_secret_access_key='test', 
                                          aws_session_token='test', 
-                                         region_name='us-east-1'):
+                                         region_name='us-east-1',
+                                         endpoint_url='http://localstack:4566'):
 
     
     df = generate_test_pii_data()
@@ -50,7 +51,8 @@ def generate_test_pii_data_to_s3_parquet(bucket_name, object_key,
         aws_access_key_id=aws_access_key_id,
         aws_secret_access_key=aws_secret_access_key,
         aws_session_token=aws_session_token,
-        region_name=region_name
+        region_name=region_name,
+        endpoint_url=endpoint_url
     )
     s3.upload_fileobj(buffer, bucket_name, object_key)
     return f's3://{bucket_name}/{object_key}'
@@ -69,9 +71,11 @@ def s3_test_data():
     # s3 = boto3.client('s3')
     # s3.delete_object(Bucket=s3_path[0][0], Key=s3_path[0][1]) if len(s3_path) > 0 else None
 
+
+@pytest.fixture(scope='session')
 def get_spark_session():
-    
     return SparkSession.builder \
         .appName("TestSparkSession") \
-        .config("spark.sql.shuffle.partitions", "1") \
+        .master("spark://spark-master:7077") \
+        .config("spark.sql.shuffle.partitions", "50") \
         .getOrCreate()
