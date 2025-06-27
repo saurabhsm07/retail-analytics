@@ -37,3 +37,7 @@ spark-submit-master-example: ## Submit example script to Spark master
 spark-run-client-example: ## Submit example script to Spark client
 	@echo "Submitting example script to Spark client..."
 	docker exec spark-client python3 ./examples/sample.py
+
+.PHONY: sql-shell
+sql-shell: ## Start an SQL shell in master container
+	docker exec -it spark-master /opt/spark/bin/spark-sql
