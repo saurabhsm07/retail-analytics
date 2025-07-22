@@ -63,6 +63,8 @@ services:
     image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
     environment:
       - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
     env_file:
       - .env
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
@@ -74,6 +76,8 @@ services:
     image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
     environment:
       - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=2g
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     env_file:
       - .env

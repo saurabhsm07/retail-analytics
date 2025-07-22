@@ -8,3 +8,5 @@ metastore_db/
 **/.idea/
 *.log
 **/volume/
+**/dist/
+**/build/
