@@ -12,3 +12,4 @@ metastore_db/
 **/build/
 *.egg-info/
 **/tmp/
+.DS_store

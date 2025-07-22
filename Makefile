@@ -1,3 +1,7 @@
+ifndef MODULE_NAME
+MODULE_NAME = ./src/examples/sample.py
+endif
+
 .PHONY: help up down submit-script-master-example submit-script-client-example
 help:
 	@echo "Available commands:"
@@ -33,13 +37,12 @@ start-master-session: ## Start Spark master session
 	docker exec -it spark-master /bin/bash
 
 .PHONY: spark-submit-master-example
-spark-submit-master-example: ## Submit example script to Spark master
+spark-submit-master: ## Submit example script to Spark master
 	@echo "Submitting example script to Spark master..."
 	docker-compose exec spark-master /opt/spark/bin/spark-submit \
-					--master spark://spark-master:7077  \
-					--conf "spark.driver.extraPythonPath=/opt/spark/work-dir/src" \
-					--conf "spark.executor.extraPythonPath=/opt/spark/work-dir/src" \
-					./examples/sample.py
+									--master spark://spark-master:7077 \
+									--py-files /opt/spark/work-dir/dist/retail_analytics-0.1.0-py3.12.egg \
+									${MODULE_NAME}
 
 .PHONY: spark-run-client-example
 spark-run-client-example: ## Submit example script to Spark client
