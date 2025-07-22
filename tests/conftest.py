@@ -73,7 +73,7 @@ def s3_test_data():
 
 
 @pytest.fixture(scope='session')
-def get_spark_session():
+def spark_session():
     return SparkSession.builder \
         .appName("TestSparkSession") \
         .master("spark://spark-master:7077") \
