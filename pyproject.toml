@@ -1,0 +1,29 @@
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "retail-analytics"
+version = "0.1.0"
+description = "spark based analytics apps with random test code"
+authors = ["Saurabh Mahambrey <mahambrey.saurabh07@gmail.com>"]
+readme = "README.md"
+packages = [
+    {include = "src"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyspark = "3.5.6"
+boto3 = "*"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "*"
+flake8 = "*"
+pytest = "*"
+pandas = "*"
+fastparquet = "*"
+faker = "*"
+
+[tool.poetry.group.build.dependencies]
+build = "*"

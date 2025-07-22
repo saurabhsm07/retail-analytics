@@ -10,3 +10,5 @@ metastore_db/
 **/volume/
 **/dist/
 **/build/
+*.egg-info/
+**/tmp/

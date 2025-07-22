@@ -9,6 +9,10 @@ help:
 build: ## Build Docker images
 	docker compose build
 
+.PHONY: build-package
+build-package: ## Build Python package
+	pipenv run python -m build
+	python setup.py bdist_egg
 	
 .PHONY: up
 up: ## Start all containers
@@ -31,7 +35,11 @@ start-master-session: ## Start Spark master session
 .PHONY: spark-submit-master-example
 spark-submit-master-example: ## Submit example script to Spark master
 	@echo "Submitting example script to Spark master..."
-	docker-compose exec spark-master /opt/spark/bin/spark-submit --master spark://spark-master:7077  ./examples/sample.py
+	docker-compose exec spark-master /opt/spark/bin/spark-submit \
+					--master spark://spark-master:7077  \
+					--conf "spark.driver.extraPythonPath=/opt/spark/work-dir/src" \
+					--conf "spark.executor.extraPythonPath=/opt/spark/work-dir/src" \
+					./examples/sample.py
 
 .PHONY: spark-run-client-example
 spark-run-client-example: ## Submit example script to Spark client
