@@ -40,8 +40,10 @@ start-master-session: ## Start Spark master session
 spark-submit-master: ## Submit example script to Spark master
 	@echo "Submitting example script to Spark master..."
 	docker-compose exec spark-master /opt/spark/bin/spark-submit \
+									--deploy-mode cluster \
 									--master spark://spark-master:7077 \
-									--py-files /opt/spark/work-dir/dist/retail_analytics-0.1.0-py3.12.egg \
+									--py-files ./dist/retail_analytics-0.1.0-py3.12.egg \
+									--archives ./dist/venv.tar.gz#venv,./dist/requirements.zip#req1,requirements.zip#req2,./requirements.zip#req3   \
 									${MODULE_NAME}
 
 .PHONY: spark-run-client-example

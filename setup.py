@@ -8,6 +8,7 @@ setup(
     install_requires=[
         "pyspark==3.5.6",
         "boto3",
+        "requests",
     ],
     author="Saurabh Mahambrey",
     author_email="mahambrey.saurabh07@gmail.com",

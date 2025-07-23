@@ -41,14 +41,30 @@ def generate_dummy_dataframe(spark, num_rows=10000000):
             (rand() * 100 + 1).cast("int").cast("string")
         )
     )
-    
+
     logger.info("=== Step 4: Adding income column ===")
     # Add income column with random income values
-    df_final = df_with_address.withColumn(
+    df_with_income = df_with_address.withColumn(
         "income",
         (rand() * 100000 + 30000).cast("double")
     )
+
+    logger.info("=== Step 5: Adding segments column ===")
+    df_with_segments = df_with_income.withColumn('segments', concat(
+            (rand() * 9999 + 1).cast("int").cast("string"),lit('_segment'),lit('|'),
+            (rand() * 9999 + 1).cast("int").cast("string"),lit('_segment'),lit('|'),
+            (rand() * 9999 + 1).cast("int").cast("string"),lit('_segment')))
     
+    logger.info("=== Step 6: Adding type column ===")
+    df_with_type = df_with_segments.withColumn(
+        "type",
+        expr("CASE WHEN rand() < 0.5 THEN 'TYPE_A' ELSE 'TYPE_B' END")
+    )
+
+
+    df_final = df_with_type
+    logger.info(f"Final DataFrame schema: {df_final.schema}")
+
     return df_final
 
 def write_to_s3(df, s3_path, num_partitions=10):

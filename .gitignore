@@ -13,3 +13,4 @@ metastore_db/
 *.egg-info/
 **/tmp/
 .DS_store
+**/venv/
