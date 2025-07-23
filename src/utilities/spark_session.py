@@ -14,8 +14,11 @@ class SparkManager:
         self.spark = None
     
     def create_session(self, **configs):
-        """Create Spark session with optional configurations"""
-        builder = SparkSession.builder.appName(self.app_name)
+        """Create Spark session with optional configurations for YARN"""
+        builder = (SparkSession.builder
+                  .appName(self.app_name)
+                  .config("spark.master", "yarn")
+                  .config("spark.submit.deployMode", "cluster"))
         
         # Apply any additional configurations
         for key, value in configs.items():

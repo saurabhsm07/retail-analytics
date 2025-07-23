@@ -14,6 +14,9 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     env_file:
       - .env
+    networks:
+      - hadoop-yarn
+
   terraform:
     container_name: ${TERRAFORM_CONTAINER_NAME}
     image: hashicorp/terraform
@@ -25,6 +28,9 @@ services:
       - localstack
     env_file:
       - .env
+    networks:
+      - hadoop-yarn
+
   postgres:
     container_name: ${POSTGRES_CONTAINER_NAME}
     image: postgres:13.12
@@ -32,71 +38,178 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      #      - "postgres_data:/var/lib/postgresql/data"
       - "./scripts/db/deployment:/docker-entrypoint-initdb.d"
     env_file:
       - .env
-  spark-master:
-    container_name: ${SPARK_MASTER_CONTAINER_NAME}
-    image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
-    env_file:
-      - .env
+    networks:
+      - hadoop-yarn
+
+  # Hadoop NameNode
+  namenode:
+    container_name: ${NAMENODE_CONTAINER_NAME}
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    environment:
+      - CLUSTER_NAME=retail-analytics
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - CORE_CONF_hadoop_proxyuser_hue_hosts=*
+      - CORE_CONF_hadoop_proxyuser_hue_groups=*
+      - CORE_CONF_io_compression_codecs=org.apache.hadoop.io.compress.SnappyCodec
+      - HDFS_CONF_dfs_webhdfs_enabled=true
+      - HDFS_CONF_dfs_permissions_enabled=false
+      - HDFS_CONF_dfs_nameservices=hdfscluster
     ports:
-      - "8080:8080"
-      - "7077:7077"
-      - "4040:4040"
+      - "9870:9870"  # NameNode Web UI
+      - "9000:9000"  # HDFS
     volumes:
-      - "./:/opt/spark/work-dir:rw"
-      - "${HOME}/.aws/:/opt/spark/.aws:ro"
-      - "./volume/tmp/:/tmp/"
-      - "./volume/h-s/:/tmp/hadoop-spark/"
-      - "./volume/h-s-a/:/tmp/hadoop-spark/s3a"
-      - "./config/spark/:/opt/spark/conf/"
-    depends_on:
-      localstack:
-        condition: service_started
-      postgres:
-        condition: service_started
-  spark-worker-1:
-    container_name: spark-worker-1
-    image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
-      - SPARK_WORKER_CORES=2
-      - SPARK_WORKER_MEMORY=2g
+      - hadoop_namenode:/hadoop/dfs/name
+      - "./:/opt/shared:rw"
+    networks:
+      - hadoop-yarn
     env_file:
       - .env
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
-    depends_on:
-      spark-master:
-        condition: service_started
-  spark-worker-2:
-    container_name: spark-worker-2
-    image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
+
+  # Hadoop DataNode
+  datanode:
+    container_name: ${DATANODE_CONTAINER_NAME}
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     environment:
-      - SPARK_MASTER=spark://spark-master:7077
-      - SPARK_WORKER_CORES=2
-      - SPARK_WORKER_MEMORY=2g
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+      - SERVICE_PRECONDITION=namenode:9870
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - CORE_CONF_hadoop_proxyuser_hue_hosts=*
+      - CORE_CONF_hadoop_proxyuser_hue_groups=*
+      - CORE_CONF_io_compression_codecs=org.apache.hadoop.io.compress.SnappyCodec
+      - HDFS_CONF_dfs_webhdfs_enabled=true
+      - HDFS_CONF_dfs_permissions_enabled=false
+    ports:
+      - "9864:9864"  # DataNode Web UI
+    volumes:
+      - hadoop_datanode:/hadoop/dfs/data
+      - "./:/opt/shared:rw"
+    networks:
+      - hadoop-yarn
+    depends_on:
+      - namenode
     env_file:
       - .env
+
+  # YARN ResourceManager
+  resourcemanager:
+    container_name: ${RESOURCEMANAGER_CONTAINER_NAME}
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - YARN_CONF_yarn_log___aggregation___enable=true
+      - YARN_CONF_yarn_log_server_url=http://historyserver:8188/applicationhistory/logs/
+      - YARN_CONF_yarn_resourcemanager_recovery_enabled=true
+      - YARN_CONF_yarn_resourcemanager_store_class=org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
+      - YARN_CONF_yarn_resourcemanager_scheduler_class=org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler
+      - YARN_CONF_yarn_scheduler_capacity_root_default_maximum___allocation___mb=2048
+      - YARN_CONF_yarn_scheduler_capacity_root_default_maximum___allocation___vcores=2
+    ports:
+      - "8088:8088"  # ResourceManager Web UI
+      - "8032:8032"  # ResourceManager
+    volumes:
+      - "./:/opt/shared:rw"
+    networks:
+      - hadoop-yarn
     depends_on:
-      spark-master:
-        condition: service_started
+      - namenode
+      - datanode
+    env_file:
+      - .env
+
+  # YARN NodeManager
+  nodemanager:
+    container_name: ${NODEMANAGER_CONTAINER_NAME}
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - YARN_CONF_yarn_log___aggregation___enable=true
+      - YARN_CONF_yarn_log_server_url=http://historyserver:8188/applicationhistory/logs/
+      - YARN_CONF_yarn_resourcemanager_recovery_enabled=true
+      - YARN_CONF_yarn_resourcemanager_store_class=org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
+      - YARN_CONF_yarn_nodemanager_aux___services=mapreduce_shuffle
+      - YARN_CONF_yarn_nodemanager_aux___services_mapreduce___shuffle_class=org.apache.hadoop.mapred.ShuffleHandler
+      - YARN_CONF_yarn_nodemanager_resource_memory___mb=2048
+      - YARN_CONF_yarn_nodemanager_resource_cpu___vcores=2
+      - YARN_CONF_yarn_nodemanager_disk___health___checker_max___disk___utilization___per___disk___percentage=98.5
+      - YARN_CONF_yarn_nodemanager_remote___app___log___dir=/app-logs
+      - YARN_CONF_yarn_nodemanager_log___dirs=/var/log/hadoop-yarn/container
+    ports:
+      - "8042:8042"  # NodeManager Web UI
+    volumes:
+      - "./:/opt/shared:rw"
+    networks:
+      - hadoop-yarn
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+    env_file:
+      - .env
+
+  # Spark History Server
+  historyserver:
+    container_name: ${HISTORYSERVER_CONTAINER_NAME}
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    environment:
+      - SERVICE_PRECONDITION=namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:9000
+      - CORE_CONF_hadoop_http_staticuser_user=root
+      - YARN_CONF_yarn_log___aggregation___enable=true
+      - YARN_CONF_yarn_log_server_url=http://historyserver:8188/applicationhistory/logs/
+      - YARN_CONF_yarn_resourcemanager_recovery_enabled=true
+      - YARN_CONF_yarn_resourcemanager_store_class=org.apache.hadoop.yarn.server.resourcemanager.recovery.FileSystemRMStateStore
+    ports:
+      - "8188:8188"  # History Server Web UI
+    volumes:
+      - "./:/opt/shared:rw"
+    networks:
+      - hadoop-yarn
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+    env_file:
+      - .env
+
+  # Spark Client with YARN support
   spark-client:
     build:
       context: .
       dockerfile: Dockerfile.spark-client
-    container_name: spark-client
-    volumes:
-      - .:/app
-      - ./local/jars/:/opt/spark/jars/
+    container_name: ${SPARK_CLIENT_CONTAINER_NAME}
     environment:
-      - CLASSPATH=/opt/spark/jars/*
+      - SPARK_MASTER=yarn
+      - HADOOP_CONF_DIR=/etc/hadoop
+      - YARN_CONF_DIR=/etc/hadoop
+      - CLASSPATH=/opt/spark/jars/*:/opt/hadoop/share/hadoop/common/*:/opt/hadoop/share/hadoop/hdfs/*:/opt/hadoop/share/hadoop/yarn/*
+    volumes:
+      - "./:/opt/shared:rw"
+      - "./local/jars/:/opt/spark/jars/"
+      - "./config/spark/:/opt/spark/conf/"
+      - "./config/hadoop/:/etc/hadoop/"
+    networks:
+      - hadoop-yarn
     command: ["sleep", "infinity"]
     depends_on:
-      spark-worker-1:
-        condition: service_started
-      spark-worker-2:
-        condition: service_started
+      - namenode
+      - datanode
+      - resourcemanager
+      - nodemanager
+    env_file:
+      - .env
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode:
+
+networks:
+  hadoop-yarn:
+    driver: bridge
