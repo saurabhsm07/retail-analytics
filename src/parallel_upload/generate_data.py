@@ -85,7 +85,7 @@ def write_to_s3(df, s3_path, num_partitions=10):
 def main():
     # Configuration
     S3_OUTPUT_PATH = "s3a://my-bucket/test-data/"
-    NUM_ROWS = 100000000
+    NUM_ROWS = 10000000
     NUM_PARTITIONS = 12
     
     # Create Spark session using the manager

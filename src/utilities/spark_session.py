@@ -15,6 +15,9 @@ class SparkManager:
     
     def create_session(self, **configs):
         """Create Spark session with optional configurations"""
+        os.environ['PYSPARK_PYTHON'] = "./env.pex"
+        os.environ['PYSPARK_DRIVER_PYTHON'] = "python"
+        spark = SparkSession.builder.getOrCreate()
         builder = SparkSession.builder.appName(self.app_name)
         
         # Apply any additional configurations
