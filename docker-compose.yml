@@ -1,4 +1,5 @@
 services:
+
   localstack:
     container_name: ${LOCALSTACK_CONTAINER_NAME}
     image: localstack/localstack:3.0.0
@@ -14,6 +15,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
     env_file:
       - .env
+
   terraform:
     container_name: ${TERRAFORM_CONTAINER_NAME}
     image: hashicorp/terraform
@@ -25,6 +27,7 @@ services:
       - localstack
     env_file:
       - .env
+
   postgres:
     container_name: ${POSTGRES_CONTAINER_NAME}
     image: postgres:13.12
@@ -36,6 +39,7 @@ services:
       - "./scripts/db/deployment:/docker-entrypoint-initdb.d"
     env_file:
       - .env
+
   spark-master:
     container_name: ${SPARK_MASTER_CONTAINER_NAME}
     image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
@@ -58,6 +62,7 @@ services:
         condition: service_started
       postgres:
         condition: service_started
+
   spark-worker-1:
     container_name: spark-worker-1
     image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
@@ -71,6 +76,7 @@ services:
     depends_on:
       spark-master:
         condition: service_started
+
   spark-worker-2:
     container_name: spark-worker-2
     image: apache/spark:3.5.6-scala2.12-java17-python3-r-ubuntu
@@ -84,6 +90,7 @@ services:
     depends_on:
       spark-master:
         condition: service_started
+
   spark-client:
     build:
       context: .
@@ -92,6 +99,7 @@ services:
     volumes:
       - .:/app
       - ./local/jars/:/opt/spark/jars/
+      - ./../certs/:/certs/
     environment:
       - CLASSPATH=/opt/spark/jars/*
     command: ["sleep", "infinity"]

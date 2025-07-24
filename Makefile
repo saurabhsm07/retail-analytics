@@ -9,14 +9,15 @@ help:
 		awk 'BEGIN {FS = ":.*?## "}; {printf "%-30s %s\n", $$1, $$2}'
 
 
-.PHONY: build
-build: ## Build Docker images
+.PHONY: build-image
+build-image: ## Build Docker images
 	docker compose build
 
 .PHONY: build-package
-build-package: ## Build Python package
-	pipenv run python -m build
-	python setup.py bdist_egg
+build-package: ## Build Python package pass ALL=true to build native + 3rd party dependencies, default native only
+	$(eval ALL ?= false)
+	docker exec spark-client ./scripts/build_packages/build_package.sh $(ALL)
+
 	
 .PHONY: up
 up: ## Start all containers
@@ -37,13 +38,13 @@ start-master-session: ## Start Spark master session
 	docker exec -it spark-master /bin/bash
 
 .PHONY: spark-submit-master-example
-spark-submit-master: ## Submit example script to Spark master
+spark-submit-master: ## Submit example script to Spark master, MODULE_NAME module to be executed
 	@echo "Submitting example script to Spark master..."
 	docker-compose exec spark-master /opt/spark/bin/spark-submit \
-									--deploy-mode cluster \
 									--master spark://spark-master:7077 \
-									--py-files ./dist/retail_analytics-0.1.0-py3.12.egg \
-									--archives ./dist/venv.tar.gz#venv,./dist/requirements.zip#req1,requirements.zip#req2,./requirements.zip#req3   \
+									--py-files ./dist/retail_analytics-0.1.0-py3.10.egg \
+									--archives ./dist/venv.tar.gz#venv \
+									--files ./dist/env.pex \
 									${MODULE_NAME}
 
 .PHONY: spark-run-client-example
