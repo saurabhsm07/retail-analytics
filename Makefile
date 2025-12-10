@@ -55,3 +55,8 @@ spark-run-client-example: ## Submit example script to Spark client
 .PHONY: sql-shell
 sql-shell: ## Start an SQL shell in master container
 	docker exec -it spark-master /opt/spark/bin/spark-sql
+
+
+.PHONY: pyspark-shell
+pyspark-shell: ## Start a PySpark shell in master container
+	docker exec -it spark-master /opt/spark/bin/pyspark
