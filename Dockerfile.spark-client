@@ -11,7 +11,9 @@ RUN apt-get update && \
         wget && \
     rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+RUN ln -s "$(dirname "$(dirname "$(readlink -f "$(which java)")")")" /opt/java-home
+ENV JAVA_HOME=/opt/java-home
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Install pipenv
 RUN pip install pipenv

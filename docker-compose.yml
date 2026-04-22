@@ -99,7 +99,10 @@ services:
     volumes:
       - .:/app
       - ./local/jars/:/opt/spark/jars/
+      - ./config/spark/:/opt/spark/conf/
       - ./../certs/:/certs/
+    ports:
+      - "8888:8888"
     environment:
       - CLASSPATH=/opt/spark/jars/*
     command: ["sleep", "infinity"]
